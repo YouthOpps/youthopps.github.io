@@ -24,6 +24,8 @@ Publishers and affected people can request correction or removal of one link or 
 
 ## Contact
 
+Follow [YouthOpp on LinkedIn](https://www.linkedin.com/company/youthopps) for project updates. The footer links to LinkedIn without embedding its widgets or loading its scripts.
+
 - **youthopps.org:** [Discussions](https://github.com/YouthOpps/youthopps.github.io/discussions) for questions; [Issues](https://github.com/YouthOpps/youthopps.github.io/issues/new) for site bugs or removal requests.
 - **data-pipeline:** [Discussions](https://github.com/YouthOpps/data-pipeline/discussions) for collection questions; [Issues](https://github.com/YouthOpps/data-pipeline/issues/new) for collection bugs or data corrections.
 - **Private or sensitive matters:** [contact@youthopps.org](mailto:contact@youthopps.org). Do not post them publicly.
