@@ -323,7 +323,7 @@ test('homepage country cloud retains small countries with bounded sizing and cou
   assert.match(html,/aria-label="Germany, 10 opportunities"/);
   assert.ok(html.indexOf('aria-label="Austria, 1 opportunities"')<html.indexOf('aria-label="Germany, 10 opportunities"'));
   const sizes=[...html.matchAll(/href="\/opportunities\/from\/(?:at|de)\/" style="font-size:(\d+)px"/g)].map(match=>Number(match[1]));
-  assert.equal(sizes.length,2);assert.ok(sizes.every(size=>size>=14&&size<=28));assert.ok(sizes[0]<sizes[1]);
+  assert.equal(sizes.length,2);assert.ok(sizes.every(size=>size>=13&&size<=22));assert.ok(sizes[0]<sizes[1]);
  }finally{await fs.rm(dir,{recursive:true,force:true});}
 });
 
@@ -351,6 +351,8 @@ test('homepage displays ten most recently attempted sources and statuses',async(
   assert.ok(section.includes('/sources/publisher/source-11/'));
   assert.ok(!section.includes('/sources/publisher/source-0/'));
   assert.ok(section.includes('source-status issue')&&section.includes('Fail'));
+  assert.match(section,/<div class="publisher-list-heading"><a href="\/sources\/publisher\/source-11\/">Publisher 11<\/a><span class="source-status issue">Fail<\/span><\/div>/);
+  assert.match(section,/<p>International \/ unspecified · <time datetime="2026-10-12T00:00:00.000Z">/);
   assert.ok(section.includes('<time datetime="2026-10-12T00:00:00.000Z">'));
   assert.ok(html.includes('Explore all sources'));
  }finally{await fs.rm(dir,{recursive:true,force:true});}
