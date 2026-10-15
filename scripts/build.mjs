@@ -21,9 +21,12 @@ export function collectionTime(value){
  if(!value||!Number.isFinite(Date.parse(value)))return null;
  return new Date(value).toISOString().slice(0,16).replace('T',' ')+' UTC';
 }
+/** Formats deadlines at the consumer's existing precision. */
 export function deadlineLabel(value) {
   const time = deadlineTime(value);
-  if (!Number.isFinite(time)) return 'Not provided';
+  if (!Number.isFinite(time)) {
+    return 'Not provided';
+  }
   if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
     return `${value} (time not provided)`;
   }
