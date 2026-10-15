@@ -84,7 +84,12 @@ const countryName=code=>{try{return new Intl.DisplayNames(['en'],{type:'region'}
 const publisherCountry=s=>/^[A-Z]{2}$/.test(s?.publisher_country||s?.country||'')?(s.publisher_country||s.country):null;
 const publisherCountries=[...new Set([...directory.map(publisherCountry),...records.map(r=>r.publisher_country)].filter(c=>/^[A-Z]{2}$/.test(c||'')))].sort((a,b)=>countryName(a).localeCompare(countryName(b)));
 const directoryCountryLinks=publisherCountries.map(c=>`<a href="/sources/countries/${slug(c)}/">${e(countryName(c))}</a>`).join('');
-const publisherCountryLinks=publisherCountries.map(c=>`<a href="/opportunities/from/${slug(c)}/">${e(countryName(c))}</a>`).join('');
+const countryCounts=new Map(publisherCountries.map(country=>[country,0]));
+for(const record of browseRecords){const country=record.publisher_country;if(countryCounts.has(country))countryCounts.set(country,countryCounts.get(country)+1);}
+const countryLogs=publisherCountries.map(country=>Math.log1p(countryCounts.get(country)));
+const minCountryLog=countryLogs.length?Math.min(...countryLogs):0,maxCountryLog=countryLogs.length?Math.max(...countryLogs):0;
+const countryFontSize=count=>Math.round(14+14*(maxCountryLog>minCountryLog?(Math.log1p(count)-minCountryLog)/(maxCountryLog-minCountryLog):0));
+const publisherCountryLinks=publisherCountries.map(country=>{const count=countryCounts.get(country);const name=countryName(country);return `<a href="/opportunities/from/${slug(country)}/" style="font-size:${countryFontSize(count)}px" title="${e(name)}: ${count} opportunities" aria-label="${e(name)}, ${count} opportunities">${e(name)}</a>`;}).join('');
 const json=value=>JSON.stringify(value).replace(/</g,'\\u003c');
 const navigation=config.navigation;
 const socialAlt=`${config.title} — ${config.tagline}`;
