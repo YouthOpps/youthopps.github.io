@@ -326,3 +326,16 @@ test('homepage country cloud retains small countries with bounded sizing and cou
   assert.equal(sizes.length,2);assert.ok(sizes.every(size=>size>=14&&size<=28));assert.ok(sizes[0]<sizes[1]);
  }finally{await fs.rm(dir,{recursive:true,force:true});}
 });
+
+test('source directories are alphabetized by visible publisher name',async()=>{
+ const dir=await fs.mkdtemp(path.join(os.tmpdir(),'youthopp-alpha-'));
+ try{
+  const sources=[{source:'zeta',name:'Zulu Foundation',publisher_country:'DE'},{source:'beta',name:'beta Institute',publisher_country:'DE'},{source:'alpha',name:'Alpha Academy',publisher_country:'DE'}];
+  await build({input:await writeSources(path.join(dir,'datas'),{sources}),out:path.join(dir,'site')});
+  for(const route of ['sources/index.html','sources/countries/de/index.html']){
+   const html=await fs.readFile(path.join(dir,'site',route),'utf8');
+   const names=[...html.matchAll(/<article class="source-card publisher-card">[\s\S]*?<h2>([^<]+)<\/h2>/g)].map(match=>match[1]);
+   assert.deepEqual(names,['Alpha Academy','beta Institute','Zulu Foundation']);
+  }
+ }finally{await fs.rm(dir,{recursive:true,force:true});}
+});
