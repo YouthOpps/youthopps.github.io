@@ -110,3 +110,21 @@ test('optional summary language preserves valid tags and rejects malformed value
     await assert.rejects(loadData(root), /Invalid opportunity summary language/);
   }
 });
+
+test('institution display names override domains while preserving attribution', async t => {
+  const metadata = {
+    status: 'success', name: 'Legacy programme title',
+    display_name: '  Bosch  ', website_url: 'https://www.bosch.com/careers/',
+    attribution: 'Bosch — official career programme information',
+  };
+  const root = await fixture(t, [], metadata);
+  const source = (await loadData(root)).sources[0];
+  assert.equal(source.name, 'Bosch');
+  assert.equal(source.id, 'example-source');
+  assert.equal(source.attribution, metadata.attribution);
+  for (const display_name of ['', '  ', null, 12, {}]) {
+    await fs.writeFile(path.join(root, 'example-source', 'metadata.json'),
+        JSON.stringify({...metadata, display_name}));
+    assert.equal((await loadData(root)).sources[0].name, 'bosch.com');
+  }
+});

@@ -63,9 +63,11 @@ export async function loadData(datasPath) {
   for(const key of ['last_attempt_at','last_success_at','last_checked_at'])if(metadata[key]!=null&&!validDate(metadata[key]))throw new Error(`Invalid source metadata date ${key} in ${folder}/metadata.json`);
   const clean=publicMetadata(metadata);
   const website=[clean.website_url,clean.official_website,clean.official_site,clean.url,clean.source_url].find(safeUrl)||null;
-  const name = website ? new URL(website).hostname.replace(/^www\./i, '') :
+  const displayName = typeof clean.display_name === 'string' ?
+    clean.display_name.trim() : '';
+  const name = displayName || (website ? new URL(website).hostname.replace(/^www\./i, '') :
     [clean.name, clean.title, clean.page_title, entry.name]
-        .find(value => typeof value === 'string' && value.trim());
+        .find(value => typeof value === 'string' && value.trim()));
   const country=[clean.publisher_country,clean.country].find(value=>typeof value==='string'&&/^[A-Z]{2}$/.test(value))||null;
   sources.push({...clean,id:entry.name,source:entry.name,name,description:typeof clean.description==='string'?clean.description:null,website_url:website,publisher_country:country});
   for(const record of records) {
