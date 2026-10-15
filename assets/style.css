@@ -71,6 +71,8 @@ nav a[aria-current] { color: var(--green); }
 .directory-aside > a, .index-more { font-size: 13px; display: inline-block; margin-top: 12px; text-decoration: none; }
 .publisher-countries { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-block: 20px; }
 .publisher-countries a { font-size: 13px; }
+.home-directory .publisher-countries { align-items: baseline; gap: 10px 16px; }
+.home-directory .publisher-countries a { line-height: 1.3; overflow-wrap: anywhere; }
 .directory-aside .publisher-countries { margin-block: 12px 24px; }
 .community-panel { background: #f3f5f8; padding: 20px; margin-top: 22px; }
 .community-panel .eyebrow { font-size: 10px; color: var(--muted); margin-bottom: 8px; }
