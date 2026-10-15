@@ -68,12 +68,15 @@ nav a[aria-current] { color: var(--green); }
 .publisher-list > div { border-top: 1px solid var(--line); padding: 11px 0; }
 .publisher-list a { font-size: 14px; color: var(--ink); text-decoration: none; font-weight: 700; }
 .publisher-list p { font-size: 11px; color: var(--muted); margin: 3px 0 0; }
+.publisher-list-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.publisher-list-heading a { min-width: 0; overflow-wrap: anywhere; }
+.publisher-list-heading .source-status { flex-shrink: 0; margin-top: 1px; }
 .directory-aside > a, .index-more { font-size: 13px; display: inline-block; margin-top: 12px; text-decoration: none; }
 .publisher-countries { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-block: 20px; }
 .publisher-countries a { font-size: 13px; }
-.home-directory .publisher-countries { align-items: baseline; gap: 10px 16px; }
-.home-directory .publisher-countries a { line-height: 1.3; overflow-wrap: anywhere; }
-.directory-aside .publisher-countries { margin-block: 12px 24px; }
+.home-directory .publisher-countries { align-items: baseline; gap: 5px 9px; }
+.home-directory .publisher-countries a { line-height: 1.15; overflow-wrap: anywhere; }
+.directory-aside .publisher-countries { margin-block: 8px 16px; }
 .community-panel { background: #f3f5f8; padding: 20px; margin-top: 22px; }
 .community-panel .eyebrow { font-size: 10px; color: var(--muted); margin-bottom: 8px; }
 .community-panel h2 { font-size: 24px; margin-bottom: 7px; }
