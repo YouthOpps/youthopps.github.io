@@ -223,6 +223,49 @@ for(const country of publisherCountries)await sourceListing(`/sources/countries/
 await sourceListing('/sources/countries/international/','International / unspecified sources',directory.filter(s=>!publisherCountry(s)));
 for(const source of sources)await listing(`/sources/publisher/${slug(source.id)}/`,`${source.name} — opportunities`,browseRecords.filter(r=>r.source===source.id),sourceCard(source));
 await page('/contact/','Contact','How to contact and collaborate with YouthOpp.',`<section class="wrap section narrow"><p class="eyebrow">CONTACT & SUPPORT</p><h1 class="page-title">Start in public when you can.</h1><p class="lede">GitHub is our primary communication channel so questions, decisions and improvements stay visible and reusable.</p><div class="prose"><h2>youthopps.org</h2><p>For the site, search, design and documentation: <a href="https://github.com/YouthOpps/youthopps.github.io/discussions">Discussions — questions and ideas</a> · <a href="https://github.com/YouthOpps/youthopps.github.io/issues/new">Report a site bug</a>.</p><h2>data-pipeline</h2><p>For source integrations and data collection: <a href="https://github.com/YouthOpps/data-pipeline/discussions">Discussions — questions and ideas</a> · <a href="https://github.com/YouthOpps/data-pipeline/issues/new">Report a collection bug or data correction</a>.</p><h2>Email</h2><p>When GitHub is not suitable, especially for private or sensitive communication, email <a href="mailto:contact@youthopps.org">contact@youthopps.org</a>.</p><p>Do not publish personal, confidential or sensitive information in Discussions or Issues.</p></div></section>`);
+await page('/bot/', 'YouthOppsBot',
+    'How YouthOppsBot indexes public opportunities and how to contact us.',
+    `<section class="wrap section narrow">
+      <p class="eyebrow">FOR PUBLISHERS</p>
+      <h1 class="page-title">YouthOppsBot</h1>
+      <p class="lede">A transparent crawler for public opportunities.</p>
+      <div class="prose">
+        <p>YouthOpp is an independent project run by an individual.
+          It is not a registered nonprofit organization.</p>
+        <h2>What we index</h2>
+        <p>We collect factual information about scholarships, programmes,
+          internships and other early-career opportunities from public pages
+          and feeds. We credit and link to original publishers. Publishers
+          remain the authority for eligibility, deadlines and applications;
+          we do not reproduce full articles.</p>
+        <h2>Identify our requests</h2>
+        <p>Our crawler uses this HTTP User-Agent:</p>
+        <pre><code>YouthOppsBot/1.0 (+https://youthopps.org/bot/)</code></pre>
+        <h2>How we collect</h2>
+        <p>We review robots.txt and applicable source terms before integrating
+          a source. Collection uses public routes and respects access refusals;
+          it does not bypass authentication or access restrictions.</p>
+        <p>Our collection policy requires each adapter to space publisher
+          requests at least six seconds apart and allow no more than ten
+          request starts in any rolling minute.
+          Stricter source limits take priority. Publisher-wide request budgets
+          are shared where required.</p>
+        <p>We back off after rate limits and temporary errors, honor applicable
+          Retry-After instructions, and stop when access is refused or a
+          source requires permission. Collection status and the last successful
+          update are available on our <a href="/sources/">source pages</a>.</p>
+        <h2>Questions, corrections and removal</h2>
+        <p>Email <a href="mailto:contact@youthopps.org">contact@youthopps.org</a>
+          for crawler questions, private concerns, or requests to correct or
+          remove a link or source. Include the affected URLs; a reason is
+          optional. Please do not post sensitive information publicly.</p>
+        <p>A maintainer reviews requests; submitting a request does not
+          automatically remove content. Current listings and historical Git
+          copies are separate. See our
+          <a href="/docs/trust/#source-removal">source-removal policy</a>
+          and <a href="/contact/">contact options</a>.</p>
+      </div>
+    </section>`);
 const overview=await fs.readFile(path.join(root,'docs/start-here.md'),'utf8');
 const missionSections = overview.split(/(?=^## )/m).filter((section) =>
   /^## Our (mission|vision|approach)\r?\n/.test(section));
