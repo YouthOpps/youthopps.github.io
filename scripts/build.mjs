@@ -123,6 +123,10 @@ const recordSource=r=>sources.find(s=>(s.id||s.source)===r.source);
 const recordPublisherCountry=r=>/^[A-Z]{2}$/.test(r.publisher_country||'')?r.publisher_country:publisherCountry(recordSource(r));
 const sourceName=r=>recordSource(r)?.name||r.source||'Original source';
 const sourceInstitution = record => {
+  const displayName = recordSource(record)?.display_name;
+  if (typeof displayName === 'string' && displayName.trim()) {
+    return displayName.trim();
+  }
   const attribution = recordSource(record)?.attribution;
   if (typeof attribution !== 'string' || !attribution.trim()) {
     return '';
@@ -143,7 +147,7 @@ const sourceCell = record => {
   const website = safeUrl(recordSource(record)?.website_url);
   const websiteLine = website === '#' ?
     '<span class="row-source-website">Website not provided</span>' :
-    `<a class="row-source-website" href="${e(website)}" rel="noopener noreferrer">${e(sourceName(record))}</a>`;
+    `<a class="row-source-website" href="${e(website)}" rel="noopener noreferrer">${e(new URL(website).hostname.replace(/^www\./i, ''))}</a>`;
   return `<a class="row-source" href="/sources/publisher/${slug(record.source)}/">${e(institution)}</a>` +
     ` <span class="row-source-site">(${websiteLine})</span>`;
 };

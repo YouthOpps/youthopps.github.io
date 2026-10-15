@@ -399,3 +399,34 @@ test('category badge precedes aligned title and publisher links',async()=>{
   }
  }finally{await fs.rm(dir,{recursive:true,force:true});}
 });
+
+test('concise institution labels stay separate from website links and attribution', async () => {
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'youthopp-source-name-'));
+  try {
+    const input = await writeSources(path.join(dir, 'datas'), {
+      sources: [{source: 'de-bosch', display_name: 'Bosch',
+        website_url: 'https://www.bosch.com/careers/',
+        attribution: 'Bosch — official career programme information'}],
+      opportunities: [{id: 'bosch-record', title: 'Sample Fellowship', summary: '',
+        category: 'fellowships', host_countries: ['DE'], eligible_countries: [],
+        source: 'de-bosch', url: 'https://www.bosch.com/apply', status: 'unknown'}],
+    });
+    const out = path.join(dir, 'site');
+    await build({input, out});
+    for (const route of ['index.html', 'opportunities/index.html',
+      'sources/publisher/de-bosch/index.html']) {
+      const html = await fs.readFile(path.join(out, route), 'utf8');
+      const row = html.match(/<tr class="opportunity"[^>]*>[\s\S]*?<\/tr>/)?.[0];
+      assert.ok(row.includes('href="/sources/publisher/de-bosch/">Bosch</a>'));
+      assert.ok(row.includes('href="https://www.bosch.com/careers/" rel="noopener noreferrer">bosch.com</a>'));
+      assert.ok(!row.includes('official career programme information'));
+    }
+    const sources = await fs.readFile(path.join(out, 'sources/index.html'), 'utf8');
+    assert.ok(sources.includes('>Bosch</h2>'));
+    const detail = await fs.readFile(path.join(out, 'opportunity/bosch-record/index.html'), 'utf8');
+    assert.ok(detail.includes('<dt>Publisher</dt><dd>Bosch</dd>'));
+    assert.ok(detail.includes('Source attribution: Bosch — official career programme information'));
+  } finally {
+    await fs.rm(dir, {recursive: true, force: true});
+  }
+});
