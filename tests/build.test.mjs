@@ -379,3 +379,23 @@ test('opportunity tables show three columns with source under category-badged ti
   }
  }finally{await fs.rm(dir,{recursive:true,force:true});}
 });
+
+test('category badge precedes aligned title and publisher links',async()=>{
+ const dir=await fs.mkdtemp(path.join(os.tmpdir(),'youthopp-align-'));
+ try{
+  const input=await writeSources(path.join(dir,'datas'),{
+   sources:[{source:'sample',name:'Sample publisher',website_url:'https://example.org/'}],
+   opportunities:[{id:'sample-1',title:'Sample Fellowship',summary:'',category:'fellowships',host_countries:['DE'],eligible_countries:[],source:'sample',url:'https://example.org/apply',status:'unknown'}]
+  });
+  await build({input,out:path.join(dir,'site')});
+  for(const route of ['index.html','opportunities/index.html']){
+   const html=await fs.readFile(path.join(dir,'site',route),'utf8');
+   const row=html.match(/<tr class="opportunity"[^>]*>[\\s\\S]*?<\\/tr>/)?.[0];
+   assert.ok(row?.includes('<div class="opportunity-heading"><span class="opportunity-type type-fellowships">'));
+   assert.ok(row.includes('<div class="opportunity-content"><a class="row-title"'));
+   assert.ok(row.includes('class="row-source" href="/sources/publisher/sample/"'));
+   assert.ok(row.includes('class="row-source-site">(<a class="row-source-website" href="https://example.org/"'));
+   assert.equal((row.match(/<td(?:\\s|>)/g)||[]).length,3);
+  }
+ }finally{await fs.rm(dir,{recursive:true,force:true});}
+});
