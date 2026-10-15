@@ -82,7 +82,7 @@ test('programme and institutional records show accurate kind notices on catalog 
    {...base,id:'regular',title:'Regular fixture',summary:'Original listing summary',category:'scholarships',tags:[]}
   ]});
   await build({input,out});const catalog=await fs.readFile(path.join(out,'opportunities/index.html'),'utf8');
-  assert.ok(catalog.includes('<span class="tag">Programme overview</span>'));assert.ok(catalog.includes('<span class="tag">Institutional grant</span>'));
+  assert.ok(catalog.includes('<span class="row-category">Programme overview'));assert.ok(catalog.includes('<span class="row-category">Institutional grant'));
   assert.ok(catalog.includes('Confirm current application calls and dates with the publisher.'));
   assert.ok(catalog.includes('Funding for institutions or organisations.'));
   const programme=await fs.readFile(path.join(out,'opportunity/programme/index.html'),'utf8');
@@ -149,7 +149,7 @@ test('canonical record kinds override legacy tags and preserve information-only 
    ['institutional-conflict','Institutional grant','View institutional grant details ↗','Funding for institutions or organisations. Confirm eligible applicants and current calls with the publisher.']
   ]){
    const row=(listing.match(/<tr class="opportunity"[^>]*>[\s\S]*?<\/tr>/g)||[]).find(row=>row.includes('/opportunity/'+id+'/"'));
-   assert.ok(row?.includes('<span class="tag">'+label+'</span>'),id+' listing kind');
+   assert.ok(row?.includes('<span class="row-category">'+label),id+' listing kind');
    const html=await fs.readFile(path.join(out,'opportunity',id,'index.html'),'utf8');
    assert.ok(html.includes('<span class="tag">'+label+'</span>'),id+' detail kind');
    assert.ok(html.includes(action),id+' information action');
@@ -355,5 +355,27 @@ test('homepage displays ten most recently attempted sources and statuses',async(
   assert.match(section,/<p>International \/ unspecified · <time datetime="2026-10-12T00:00:00.000Z">/);
   assert.ok(section.includes('<time datetime="2026-10-12T00:00:00.000Z">'));
   assert.ok(html.includes('Explore all sources'));
+ }finally{await fs.rm(dir,{recursive:true,force:true});}
+});
+
+test('opportunity tables show three columns with source under category-badged title',async()=>{
+ const dir=await fs.mkdtemp(path.join(os.tmpdir(),'youthopp-table-layout-'));
+ try{
+  const input=await writeSources(path.join(dir,'datas'),{
+   sources:[{source:'fixture',name:'Fixture Publisher',website_url:'https://example.org/source'}],
+   opportunities:[{id:'layout-record',title:'Sample Fellowship',summary:'',category:'fellowships',host_countries:['DE'],eligible_countries:[],source:'fixture',url:'https://example.org/apply',status:'unknown'}]
+  });
+  await build({input,out:path.join(dir,'site')});
+  for(const route of ['index.html','opportunities/index.html']){
+   const html=await fs.readFile(path.join(dir,'site',route),'utf8');
+   const headers=[...html.matchAll(/<th scope="col">([^<]+)<\/th>/g)].map(match=>match[1]);
+   assert.deepEqual(headers,['Opportunity','Destination','Deadline']);
+   const row=html.match(/<tr class="opportunity"[^>]*>[\s\S]*?<\/tr>/)?.[0];
+   assert.ok(row?.includes('class="opportunity-type type-fellowships">Fellowships</span>'));
+   assert.ok(row.includes('Sample Fellowship'));
+   assert.ok(row.includes('class="opportunity-source"'));
+   assert.ok(row.includes('class="row-source-website"'));
+   assert.equal((row.match(/<td(?:\s|>)/g)||[]).length,3);
+  }
  }finally{await fs.rm(dir,{recursive:true,force:true});}
 });
