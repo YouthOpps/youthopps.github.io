@@ -82,7 +82,7 @@ test('programme and institutional records show accurate kind notices on catalog 
    {...base,id:'regular',title:'Regular fixture',summary:'Original listing summary',category:'scholarships',tags:[]}
   ]});
   await build({input,out});const catalog=await fs.readFile(path.join(out,'opportunities/index.html'),'utf8');
-  assert.ok(catalog.includes('<span class="tag">Programme overview</span>'));assert.ok(catalog.includes('<span class="tag">Institutional grant</span>'));
+  assert.ok(catalog.includes('<span class="row-category">Programme overview'));assert.ok(catalog.includes('<span class="row-category">Institutional grant'));
   assert.ok(catalog.includes('Confirm current application calls and dates with the publisher.'));
   assert.ok(catalog.includes('Funding for institutions or organisations.'));
   const programme=await fs.readFile(path.join(out,'opportunity/programme/index.html'),'utf8');
@@ -149,7 +149,7 @@ test('canonical record kinds override legacy tags and preserve information-only 
    ['institutional-conflict','Institutional grant','View institutional grant details ↗','Funding for institutions or organisations. Confirm eligible applicants and current calls with the publisher.']
   ]){
    const row=(listing.match(/<tr class="opportunity"[^>]*>[\s\S]*?<\/tr>/g)||[]).find(row=>row.includes('/opportunity/'+id+'/"'));
-   assert.ok(row?.includes('<span class="tag">'+label+'</span>'),id+' listing kind');
+   assert.ok(row?.includes('<span class="row-category">'+label),id+' listing kind');
    const html=await fs.readFile(path.join(out,'opportunity',id,'index.html'),'utf8');
    assert.ok(html.includes('<span class="tag">'+label+'</span>'),id+' detail kind');
    assert.ok(html.includes(action),id+' information action');
