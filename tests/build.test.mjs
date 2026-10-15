@@ -390,12 +390,12 @@ test('category badge precedes aligned title and publisher links',async()=>{
   await build({input,out:path.join(dir,'site')});
   for(const route of ['index.html','opportunities/index.html']){
    const html=await fs.readFile(path.join(dir,'site',route),'utf8');
-   const row=html.match(/<tr class="opportunity"[^>]*>[\\s\\S]*?<\\/tr>/)?.[0];
+   const row=html.split('<tr class="opportunity"')[1]?.split("</tr>")[0];
    assert.ok(row?.includes('<div class="opportunity-heading"><span class="opportunity-type type-fellowships">'));
    assert.ok(row.includes('<div class="opportunity-content"><a class="row-title"'));
    assert.ok(row.includes('class="row-source" href="/sources/publisher/sample/"'));
    assert.ok(row.includes('class="row-source-site">(<a class="row-source-website" href="https://example.org/"'));
-   assert.equal((row.match(/<td(?:\\s|>)/g)||[]).length,3);
+   assert.equal(row.split("<td").length-1,3);
   }
  }finally{await fs.rm(dir,{recursive:true,force:true});}
 });
