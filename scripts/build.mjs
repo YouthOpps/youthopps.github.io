@@ -71,7 +71,7 @@ if(!Number.isInteger(config.pageSize)||config.pageSize<1)throw new Error('Invali
 const now = Date.now();
 const records=[...catalog.opportunities].sort((a, b) => compareDeadlines(a, b, now));
 const browseRecords=records.filter(r=>r.kind!=='unknown');
-const sources=catalog.sources;const directory=sources;
+const sources=catalog.sources;const sourceAlphabetic=(a,b)=>a.name.localeCompare(b.name,'en',{sensitivity:'base'})||a.id.localeCompare(b.id);const directory=[...sources].sort(sourceAlphabetic);
 const out=options.out||path.join(root,'dist');
 await checkOutput(out,options.input||process.env.DATA_PATH||path.join(root,'data-source/datas'));
 await fs.rm(out,{recursive:true,force:true});await fs.mkdir(path.join(out,'assets'),{recursive:true});
@@ -231,6 +231,7 @@ const sourceCard=s=>{
  return `<article class="source-card publisher-card"><div class="source-card-top"><span class="small">${e(publisherCountry(s)?countryName(publisherCountry(s)):'International / unspecified')}</span><span class="source-status ${state.tone}">${e(state.label)}</span></div><h2>${e(s.name)}</h2><p class="source-description">${e(s.description||'Description not provided by the source.')}</p>${sourceAttribution(s)}<div class="source-collection"><p><span>Last data received</span><strong>${last?`<time datetime="${e(s.last_success_at)}">${e(last)}</time>`:'No successful collection yet'}</strong></p><p class="small">${e(state.note)}</p></div><div class="source-actions"><a href="/sources/publisher/${slug(s.id)}/">Browse opportunities →</a>${website!=='#'?`<a class="source-website" href="${e(website)}" rel="noopener noreferrer">Official website ↗</a>`:'<span>Official website not provided</span>'}</div><details class="source-metadata"><summary>Source details and collection history</summary><dl><dt>Source identifier</dt><dd>${e(s.id)}</dd>${extra.map(([key,value])=>`<dt>${e(key.replaceAll('_',' '))}</dt><dd>${metadataValue(value)}</dd>`).join('')}</dl></details></article>`;
 };
 async function sourceListing(base,title,items){
+ items=[...items].sort(sourceAlphabetic);
  const index=await indexFile(items.map(s=>({html:sourceCard(s),search:JSON.stringify(s),country:publisherCountry(s)||'unknown',status:s.status})));
  const chunks=paginate(items,config.pageSize);
  for(let i=0;i<chunks.length;i++)await page(i===0?base:`${base}page/${i+1}/`,title,'Explore original publishers by their country.',`<section class="wrap section"><p class="eyebrow">FOLLOW THE ORIGINAL</p><h1 class="page-title">${e(title)}</h1><p class="lede">Original publishers, their public information and collection results. A successful collection does not mean applications are open.</p><nav class="publisher-countries" aria-label="Publisher countries"><a href="/sources/">All sources</a>${directoryCountryLinks}<a href="/sources/countries/international/">International / unspecified</a></nav><div ${collectionAttrs(base,index,i)}>${controls(items,true)}${resultsStatus(items.length,i,chunks.length)}<div class="source-grid collection-results">${chunks[i].map(sourceCard).join('')}</div><nav class="pagination" aria-label="Source pages">${pagination(chunks.length,i,base)}</nav></div><p>Publishers can <a href="/docs/trust/#source-removal">request removal or correction</a>.</p></section>`);
