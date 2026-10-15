@@ -20,3 +20,7 @@ The three projects are [data-pipeline](https://github.com/YouthOpps/data-pipelin
 Questions: [Discussions](https://github.com/YouthOpps/youthopps.github.io/discussions). Bugs/removal requests: [Issues](https://github.com/YouthOpps/youthopps.github.io/issues). Private matters: **contact@youthopps.org**.
 
 `docs/ai-rules.md` links to the authoritative AI rules and skills in ai-workspace on GitHub. Do not copy their contents into this repository.
+
+## License
+
+Original website software and project documentation are licensed under Apache-2.0. Published opportunity records, publisher text, external links, and branding with unresolved rights are excluded. See [LICENSE](LICENSE) and [NOTICE](NOTICE). Apache-2.0 does not grant rights to publisher data or other third-party materials.
