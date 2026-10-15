@@ -357,3 +357,25 @@ test('homepage displays ten most recently attempted sources and statuses',async(
   assert.ok(html.includes('Explore all sources'));
  }finally{await fs.rm(dir,{recursive:true,force:true});}
 });
+
+test('opportunity tables show three columns with source under category-badged title',async()=>{
+ const dir=await fs.mkdtemp(path.join(os.tmpdir(),'youthopp-table-layout-'));
+ try{
+  const input=await writeSources(path.join(dir,'datas'),{
+   sources:[{source:'fixture',name:'Fixture Publisher',website_url:'https://example.org/source'}],
+   opportunities:[{id:'layout-record',title:'Sample Fellowship',summary:'',category:'fellowships',host_countries:['DE'],eligible_countries:[],source:'fixture',url:'https://example.org/apply',status:'unknown'}]
+  });
+  await build({input,out:path.join(dir,'site')});
+  for(const route of ['index.html','opportunities/index.html']){
+   const html=await fs.readFile(path.join(dir,'site',route),'utf8');
+   const headers=[...html.matchAll(/<th scope="col">([^<]+)<\/th>/g)].map(match=>match[1]);
+   assert.deepEqual(headers,['Opportunity','Destination','Deadline']);
+   const row=html.match(/<tr class="opportunity"[^>]*>[\s\S]*?<\/tr>/)?.[0];
+   assert.ok(row?.includes('class="opportunity-type type-fellowships">Fellowships</span>'));
+   assert.ok(row.includes('Sample Fellowship'));
+   assert.ok(row.includes('class="opportunity-source"'));
+   assert.ok(row.includes('class="row-source-website"'));
+   assert.equal((row.match(/<td(?:\s|>)/g)||[]).length,3);
+  }
+ }finally{await fs.rm(dir,{recursive:true,force:true});}
+});
