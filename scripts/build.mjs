@@ -145,7 +145,7 @@ const sourceCell = record => {
     '<span class="row-source-website">Website not provided</span>' :
     `<a class="row-source-website" href="${e(website)}" rel="noopener noreferrer">${e(sourceName(record))}</a>`;
   return `<a class="row-source" href="/sources/publisher/${slug(record.source)}/">${e(institution)}</a>` +
-    websiteLine;
+    ` <span class="row-source-site">(${websiteLine})</span>`;
 };
 const sourceAttribution=s=>typeof s?.attribution==='string'&&s.attribution.trim()?`<p class="small source-attribution">Source attribution: ${e(s.attribution)}</p>`:'';
 const kindDefinitions={
@@ -163,7 +163,7 @@ const detailDescription=r=>r.summary.trim()||recordKinds(r)[0]?.note||'Original-
 const deadline=r=>`${r.deadline?`<time datetime="${e(r.deadline)}">${e(deadlineLabel(r.deadline))}</time>`:'<span>Not provided</span>'}<span class="expiry-label" hidden>Expired</span>`;
 const expiry=r=>Number.isFinite(deadlineTime(r.deadline))?` data-deadline="${deadlineTime(r.deadline)}"`:'';
 const categoryTone=category=>['scholarships','internships','volunteering','training','jobs','competitions','grants','fellowships'].includes(category)?category:'other';
-const row=r=>`<tr class="opportunity"${expiry(r)}><td><div class="opportunity-heading"><span class="opportunity-type type-${categoryTone(r.category)}">${e(label(r.category))}</span><a class="row-title" lang="${e(r.language||'und')}" href="/opportunity/${slug(r.id)}/">${e(r.title)}</a></div><div class="opportunity-source">${sourceCell(r)}</div>${recordKinds(r).filter(kind=>kind.label!=='Opportunity').map(kind=>`<span class="row-category">${e(kind.label)}<span class="sr-only"> ${e(kind.note)}</span></span>`).join('')}</td><td data-label="Destination">${r.host_countries.length?e(r.host_countries.map(countryName).join(', ')):'Not provided'}</td><td data-label="Deadline">${deadline(r)}</td></tr>`;
+const row=r=>`<tr class="opportunity"${expiry(r)}><td><div class="opportunity-heading"><span class="opportunity-type type-${categoryTone(r.category)}">${e(label(r.category))}</span><div class="opportunity-content"><a class="row-title" lang="${e(r.language||'und')}" href="/opportunity/${slug(r.id)}/">${e(r.title)}</a><div class="opportunity-source">${sourceCell(r)}</div>${recordKinds(r).filter(kind=>kind.label!=='Opportunity').map(kind=>`<span class="row-category">${e(kind.label)}<span class="sr-only"> ${e(kind.note)}</span></span>`).join('')}</div></div></td><td data-label="Destination">${r.host_countries.length?e(r.host_countries.map(countryName).join(', ')):'Not provided'}</td><td data-label="Deadline">${deadline(r)}</td></tr>`;
 const rows=items=>`<div class="index-table"><table><caption class="sr-only">Opportunities with sources, destinations and deadlines</caption><thead><tr><th scope="col">Opportunity</th><th scope="col">Destination</th><th scope="col">Deadline</th></tr></thead><tbody class="collection-results">${items.map(row).join('')}</tbody></table></div>`;
 const option=(value,text)=>`<option value="${e(value)}">${e(text)}</option>`;
 function controls(items,isSources=false){
