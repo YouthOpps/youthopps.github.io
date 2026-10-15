@@ -54,6 +54,15 @@ Every build reads one selected `datas/` snapshot, validates it, and creates stat
 
 Search and combined filters cover the whole selected collection before pagination. Publisher country, destination and applicant eligibility are separate. Public source names use the official website domain without www, with a provided name as fallback when no website is available. Opportunity source cells stack institution and website on separate lines. The institution links to the internal publisher detail page; the website links to the original official site; publisher country remains available through the country filters. A leading website name is omitted from the institution label to avoid duplication. Missing institution or website information is explicitly identified. Full disclosures remain on detail pages. Unexpired dated records sort by nearest deadline first, followed by unknown deadlines, then expired records in deadline order. Equal deadlines use record IDs for stable ties. Build output and browser search use the same ordering before pagination; the homepage preview also refreshes from the full collection. Expiry and ordering refresh on load, every 30 seconds and when returning to the tab. Expired records remain visible and turn grey through browser JavaScript. Date-only deadlines end at midnight after that UTC day. Static browsing works without JavaScript; search and live expiry need it.
 
+## Crawler transparency
+
+The build generates `/bot/` in the shared page shell, includes it in the page
+sitemap and links to it discreetly from the footer. It identifies
+`YouthOppsBot/1.0 (+https://youthopps.org/bot/)` and explains collection and
+publisher contact policies. Publish and verify this page before deploying that
+identity in source adapters. The existing contact address and human-reviewed
+source-removal policy remain authoritative.
+
 ## Delivery
 
 Cloudflare Pages uses Node.js 22, `npm run build`, output `dist`, and the website's `main` branch. `npm run check` runs tests, build and output verification; the website check Action runs it on PRs and main.

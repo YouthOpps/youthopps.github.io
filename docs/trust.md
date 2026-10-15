@@ -6,6 +6,12 @@ YouthOpp is an independent discovery index. Original publishers own their conten
 
 We link to and credit the source. We do not invent missing facts or copy full articles. Collection success means data was retrieved, not that applications are open. Failures and last successful collection times remain visible on source pages.
 
+## Automated collection
+
+[YouthOppsBot](/bot/) explains our crawler identity, public opportunity
+indexing, source access checks, request limits and publisher contact options.
+The project is individually run and is not a registered nonprofit organization.
+
 ## Privacy
 
 Core browsing needs no account and collects no application details. Search runs in your browser using static indexes; query/filter state appears in the page URL. Applications happen on external sites under their own policies. Hosting providers process requests under their own terms.
