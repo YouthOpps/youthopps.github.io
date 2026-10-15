@@ -36,17 +36,17 @@ If publication or durable error reporting fails, the run fails explicitly; it mu
 
 ## Automation
 
-Each source Action runs only its own adapter with `--publish`. The configured OeAD, FEBA and Fulbright Germany Actions run every six hours; Opportunity Desk and NASA run manually. Live adapter tests do not publish and are not run by Actions.
+Each source Action runs only its own adapter with `--publish`. All source workflows have one daily schedule at different fixed UTC times selected randomly within a staggered timetable. Main-merge and manual triggers remain available; disabled access holds remain disabled. Live adapter tests do not publish and are not run by Actions.
 
 ```flow
 caption: Refreshing youthopps.org is separate from source collection
-Every hour | youthopps.org checks data-source main
+Daily at 03:26 UTC | youthopps.org checks data-source main
 Changed revision | Commit the new data submodule pointer
 Cloudflare Git build | Validate data and generate dist/
 Readers | Receive the successful deployment
 ```
 
-If the data revision is unchanged, no refresh commit is made. Scheduled jobs can run late. A commit or passing local build is not proof of a live deployment. The workspace's own hourly pin refresh is development housekeeping, not website publication.
+If the data revision is unchanged, no refresh commit is made. Scheduled jobs can run late. The site checks once per day; data published after that check waits for the next sync unless a maintainer triggers an additional refresh. Fixed staggered cron times reduce simultaneous scheduled starts, while the source publication queue serializes delayed source jobs. The cron assignments stay fixed rather than being randomized again each day. A commit or passing local build is not proof of a live deployment. The workspace's own daily pin refresh is development housekeeping, not website publication.
 
 ## What youthopps.org builds
 

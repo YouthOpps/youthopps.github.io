@@ -2,7 +2,7 @@ name: check new data
 
 on:
   schedule:
-    - cron: '17 * * * *'
+    - cron: '26 3 * * *'
   workflow_dispatch:
 
 permissions:
