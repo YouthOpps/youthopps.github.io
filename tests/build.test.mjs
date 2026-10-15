@@ -339,3 +339,19 @@ test('source directories are alphabetized by visible publisher name',async()=>{
   }
  }finally{await fs.rm(dir,{recursive:true,force:true});}
 });
+
+test('homepage displays ten most recently attempted sources and statuses',async()=>{
+ const dir=await fs.mkdtemp(path.join(os.tmpdir(),'youthopp-recent-'));
+ try{
+  const sources=Array.from({length:12},(_,i)=>({source:'source-'+i,name:'Publisher '+i,status:i===11?'fail':'success',last_attempt_at:new Date(Date.UTC(2026,9,i+1)).toISOString()}));
+  await build({input:await writeSources(path.join(dir,'datas'),{sources}),out:path.join(dir,'site')});
+  const html=await fs.readFile(path.join(dir,'site/index.html'),'utf8');
+  const section=html.split('<div class="publisher-list">')[1].split('</div><a href="/sources/">')[0];
+  assert.equal((section.match(/href="\/sources\/publisher\//g)||[]).length,10);
+  assert.ok(section.includes('/sources/publisher/source-11/'));
+  assert.ok(!section.includes('/sources/publisher/source-0/'));
+  assert.ok(section.includes('source-status issue')&&section.includes('Fail'));
+  assert.ok(section.includes('<time datetime="2026-10-12T00:00:00.000Z">'));
+  assert.ok(html.includes('Explore all sources'));
+ }finally{await fs.rm(dir,{recursive:true,force:true});}
+});
