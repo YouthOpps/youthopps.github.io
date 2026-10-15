@@ -21,6 +21,16 @@ export function collectionTime(value){
  if(!value||!Number.isFinite(Date.parse(value)))return null;
  return new Date(value).toISOString().slice(0,16).replace('T',' ')+' UTC';
 }
+export function deadlineLabel(value) {
+  const time = deadlineTime(value);
+  if (!Number.isFinite(time)) return 'Not provided';
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return `${value} (time not provided)`;
+  }
+  const instant = new Date(time).toISOString();
+  const clock = instant.slice(11, -1).replace(/\.000$/, '');
+  return `${instant.slice(0, 10)} ${clock} UTC`;
+}
 async function physicalPath(value){
  const resolved=path.resolve(value);
  try{return await fs.realpath(resolved);}catch(error){
@@ -142,7 +152,7 @@ const recordKinds=r=>{
 const kindNotice=r=>recordKinds(r).map(kind=>`<p class="small"><span class="tag">${e(kind.label)}</span> ${e(kind.note)}</p>`).join('');
 const detailAction=r=>recordKinds(r)[0]?.action||'Read the original & apply ↗';
 const detailDescription=r=>r.summary.trim()||recordKinds(r)[0]?.note||'Original-source opportunity information. Confirm dates, eligibility and application details with the publisher.';
-const deadline=r=>`${r.deadline?`<time datetime="${e(r.deadline)}">${date(r.deadline)}</time>`:'<span>Not provided</span>'}<span class="expiry-label" hidden>Expired</span>`;
+const deadline=r=>`${r.deadline?`<time datetime="${e(r.deadline)}">${e(deadlineLabel(r.deadline))}</time>`:'<span>Not provided</span>'}<span class="expiry-label" hidden>Expired</span>`;
 const expiry=r=>Number.isFinite(deadlineTime(r.deadline))?` data-deadline="${deadlineTime(r.deadline)}"`:'';
 const row=r=>`<tr class="opportunity"${expiry(r)}><td><a class="row-title" lang="${e(r.language||'und')}" href="/opportunity/${slug(r.id)}/">${e(r.title)}</a><span class="row-category">${e(label(r.category))}${recordKinds(r).map(kind=>` · <span class="tag">${e(kind.label)}</span><span class="sr-only"> ${e(kind.note)}</span>`).join('')}</span></td><td data-label="Source">${sourceCell(r)}</td><td data-label="Destination">${r.host_countries.length?e(r.host_countries.map(countryName).join(', ')):'Not provided'}</td><td data-label="Deadline">${deadline(r)}</td></tr>`;
 const rows=items=>`<div class="index-table"><table><caption class="sr-only">Opportunities with sources, destinations and deadlines</caption><thead><tr><th scope="col">Opportunity</th><th scope="col">Source</th><th scope="col">Destination</th><th scope="col">Deadline</th></tr></thead><tbody class="collection-results">${items.map(row).join('')}</tbody></table></div>`;
