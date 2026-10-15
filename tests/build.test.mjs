@@ -310,3 +310,19 @@ test('detail summaries have independent language without changing title language
     await fs.rm(dir, {recursive: true, force: true});
   }
 });
+
+test('homepage country cloud retains small countries with bounded sizing and counts',async()=>{
+ const dir=await fs.mkdtemp(path.join(os.tmpdir(),'youthopp-cloud-'));
+ try{
+  const base={summary:'',category:'training',eligible_countries:[],url:'https://example.org',status:'unknown'};
+  const opportunities=[...Array.from({length:10},(_,i)=>({...base,id:'de-'+i,title:'German '+i,source:'germany',host_countries:['DE']})),{...base,id:'at-1',title:'Austria example',source:'austria',host_countries:['AT']}];
+  const input=await writeSources(path.join(dir,'datas'),{sources:[{source:'germany',name:'German publisher',publisher_country:'DE'},{source:'austria',name:'Austrian publisher',publisher_country:'AT'}],opportunities});
+  await build({input,out:path.join(dir,'site')});
+  const html=await fs.readFile(path.join(dir,'site/index.html'),'utf8');
+  assert.match(html,/aria-label="Austria, 1 opportunities"/);
+  assert.match(html,/aria-label="Germany, 10 opportunities"/);
+  assert.ok(html.indexOf('aria-label="Austria, 1 opportunities"')<html.indexOf('aria-label="Germany, 10 opportunities"'));
+  const sizes=[...html.matchAll(/href="\/opportunities\/from\/(?:at|de)\/" style="font-size:(\d+)px"/g)].map(match=>Number(match[1]));
+  assert.equal(sizes.length,2);assert.ok(sizes.every(size=>size>=14&&size<=28));assert.ok(sizes[0]<sizes[1]);
+ }finally{await fs.rm(dir,{recursive:true,force:true});}
+});
