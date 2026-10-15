@@ -22,7 +22,9 @@ Optional analytics is currently disabled. Before enabling it, maintainers must v
 
 Use openly licensed new fonts, themes and visuals, and retain required attribution. Installed system fonts are used without bundling font files. Public GitHub access does not itself grant a reuse licence.
 
-The existing logo, icon and social artwork lack a checked-in licence/provenance record. Branding is retained; maintainers must establish those rights before claiming open reuse. This guide grants no licence.
+Original YouthOpps website code and project documentation are licensed under [Apache License 2.0](https://github.com/YouthOpps/youthopps.github.io/blob/main/LICENSE), subject to its NOTICE. This license does not cover third-party opportunity data, publisher text, third-party media, names or trademarks.
+
+The existing logo, icon and social artwork lack a checked-in licence/provenance record. Branding is retained; maintainers must establish those rights before claiming open reuse. This guide does not grant a license to those assets.
 
 ## Source removal
 
