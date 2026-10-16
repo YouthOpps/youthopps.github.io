@@ -262,7 +262,7 @@ test('deadline order retains expired records and collection indexes include late
   assert.ok(lastPage.indexOf('Unknown deadline') < lastPage.indexOf('Expired deadline'));
   const index=JSON.parse(await fs.readFile(path.join(out,html.match(/data-index="([^"]+)"/)[1].replace('/project/','')),'utf8'));
   assert.equal(index.length,34);assert.ok(index[0].html.includes('Searchable'));assert.ok(index.at(-2).html.includes('Unknown deadline'));assert.ok(index.at(-1).html.includes('Expired deadline'));
-  assert.equal(index.at(-1).deadline,Date.parse('2000-01-01T23:59:59.999Z'));
+  assert.equal(index.at(-1).deadline,Date.parse('2000-01-02T11:59:59.999Z'));
   assert.equal(index.at(-2).deadline,null);
   const home = await fs.readFile(path.join(out, 'index.html'), 'utf8');
   assert.ok(home.includes('data-preview-index='));

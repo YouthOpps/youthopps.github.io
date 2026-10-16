@@ -25,11 +25,14 @@ export function publicMetadata(value) {
   .replace(/((?:password|passwd|secret|token|api[_-]?key|authorization|cookie|credential)\s*[=:]\s*)(?:"[^"]*"|'[^']*'|[^\r\n&,;]+)/gi,'$1[redacted]');
 }
 
-// A date-only application deadline remains valid through the end of that UTC day.
+// Unknown-timezone dates use the latest end of that date (UTC-12/AoE).
+// This conservative expiry bound does not identify the publisher timezone.
 export function deadlineTime(value) {
- if (!validDate(value)) return Infinity;
- const time = Date.parse(/^\d{4}-\d{2}-\d{2}$/.test(value) ? `${value}T23:59:59.999Z` : value);
- return Number.isFinite(time) ? time : Infinity;
+  if (!validDate(value)) return Infinity;
+  const closing = /^\d{4}-\d{2}-\d{2}$/.test(value) ?
+      `${value}T23:59:59.999-12:00` : value;
+  const time = Date.parse(closing);
+  return Number.isFinite(time) ? time : Infinity;
 }
 export function compareDeadlines(a, b, now = Date.now()) {
   return compareDeadlineTimes(deadlineTime(a.deadline),

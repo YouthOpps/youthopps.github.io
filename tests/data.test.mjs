@@ -46,8 +46,8 @@ test('public metadata recursively redacts secrets and diagnostic values',()=>{
  assert.equal(clean.token,undefined);
  assert.doesNotMatch(clean.nested.error,/abc\.def|person@example|password=secret|user:pass|token=abc/);
 });
-test('date-only deadlines include the full UTC day',()=>{
- assert.equal(deadlineTime('2026-10-08'),Date.parse('2026-10-08T23:59:59.999Z'));
+test('date-only deadlines include the full date anywhere on Earth',()=>{
+ assert.equal(deadlineTime('2026-10-08'),Date.parse('2026-10-09T11:59:59.999Z'));
  assert.equal(deadlineTime(null),Infinity);
  assert.equal(deadlineTime('2026-02-30'),Infinity);
  assert.equal(deadlineTime('2026-10-08T12:00:00'),Infinity);
@@ -68,7 +68,7 @@ test('invalid calendar dates and ambiguous timestamps fail rather than shift dea
 });
 
 
-test('build ordering respects UTC end-of-day and explicit timestamp zones', () => {
+test('build ordering respects AoE date bounds and explicit timestamp zones', () => {
   const now = Date.parse('2026-10-09T12:00:00Z');
   const records = [
     record({id: 'past', deadline: '2026-10-08'}),
@@ -80,6 +80,8 @@ test('build ordering respects UTC end-of-day and explicit timestamp zones', () =
     compareDeadlines(a, b, time)).map(item => item.id);
   assert.deepEqual(sorted(now), ['near', 'today', 'unknown', 'past']);
   assert.deepEqual(sorted(Date.parse('2026-10-10T00:00:00Z')),
+      ['today', 'unknown', 'past', 'near']);
+  assert.deepEqual(sorted(Date.parse('2026-10-10T12:00:00Z')),
       ['unknown', 'past', 'near', 'today']);
 });
 

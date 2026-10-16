@@ -19,8 +19,32 @@ test('visible closing time describes the same instant used for expiry', () => {
   assert.equal(deadlineLabel('2026-10-15T21:59:59.999999Z'),
       '2026-10-15 21:59:59.999 UTC');
   assert.equal(deadlineLabel('2026-10-15'), '2026-10-15 (time not provided)');
-  assert.equal(deadlineTime('2026-10-15'), Date.parse('2026-10-15T23:59:59.999Z'));
+  assert.equal(deadlineTime('2026-10-15'),
+      Date.parse('2026-10-16T11:59:59.999Z'));
   assert.equal(deadlineLabel(null), 'Not provided');
+});
+
+test('unknown-timezone calendar dates expire only after the AoE boundary', () => {
+  const date = '2026-10-28';
+  const cutoff = Date.parse('2026-10-29T11:59:59.999Z');
+  assert.equal(deadlineTime(date), cutoff);
+  assert.equal(deadlineLabel(date), '2026-10-28 (time not provided)');
+  // October 28 still continues in Los Angeles at this UTC observation.
+  assert.equal(isExpired(deadlineTime(date),
+      Date.parse('2026-10-29T04:00:00Z')), false);
+  assert.equal(isExpired(cutoff, cutoff - 1), false);
+  assert.equal(isExpired(cutoff, cutoff), false);
+  assert.equal(isExpired(cutoff, cutoff + 1), true);
+  assert.equal(isExpired(deadlineTime(null), cutoff + 1), false);
+  assert.equal(isExpired(deadlineTime('2026-02-30'), cutoff + 1), false);
+  assert.equal(deadlineTime('2028-02-29'),
+      Date.parse('2028-03-01T11:59:59.999Z'));
+  assert.equal(deadlineTime('2026-12-31'),
+      Date.parse('2027-01-01T11:59:59.999Z'));
+  const explicit = '2026-10-28T23:59:59.999-07:00';
+  assert.equal(deadlineTime(explicit), Date.parse(explicit));
+  assert.equal(isExpired(deadlineTime(explicit), Date.parse(explicit)), false);
+  assert.equal(isExpired(deadlineTime(explicit), Date.parse(explicit) + 1), true);
 });
 
 test('listings, details and search indexes preserve deadline precision', async t => {
