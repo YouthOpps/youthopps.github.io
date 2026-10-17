@@ -66,6 +66,24 @@ for (const collection of document.querySelectorAll('.collection')) {
  let request;
  let generation = 0;
  const readState = () => Object.fromEntries(fields.map(field => [field.name, field.value]));
+ const subscription = collection.querySelector('.rss-subscription');
+ const feedRoot = subscription ? new URL(subscription.querySelector('.rss-link').href).pathname.split('/feeds/')[0] : '';
+ const updateSubscription = () => {
+  if (!subscription) return;
+  const filters = readState();
+  const link = subscription.querySelector('.rss-link');
+  link.hidden = ['q', 'category', 'destination', 'eligible'].some(key => filters[key]);
+  const country = filters.country || subscription.dataset.feedCountry;
+  const source = filters.source || subscription.dataset.feedSource;
+  const conflict = (filters.country && subscription.dataset.feedCountry &&
+      filters.country !== subscription.dataset.feedCountry) ||
+      (filters.source && subscription.dataset.feedSource &&
+      filters.source !== subscription.dataset.feedSource);
+  const route = conflict ? '/feeds/empty.xml' : '/feeds/' +
+      (country ? `countries/${encodeURIComponent(country)}/` : '') +
+      (source ? `sources/${encodeURIComponent(source)}.xml` : 'all.xml');
+  link.href = new URL(feedRoot + route, location.origin).href;
+ };
  const restore = () => {
   const params = new URLSearchParams(location.search);
   for (const field of fields) field.value = params.get(field.name) || '';
@@ -85,6 +103,7 @@ for (const collection of document.querySelectorAll('.collection')) {
   return request;
  };
  async function render(historyMode) {
+  updateSubscription();
   const version = ++generation;
   status.textContent = 'Searching…';
   collection.setAttribute('aria-busy','true');

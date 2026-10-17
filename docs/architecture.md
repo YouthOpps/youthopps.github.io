@@ -56,6 +56,35 @@ Search and combined filters cover the whole selected collection before paginatio
 
 Source cards keep publisher identity and attribution above a separated collection summary. The action row places the internal opportunity link on the left and the official website on the right, sharing a baseline and wrapping when space is limited. Collection history remains available in a keyboard-accessible disclosure. These cards use the shared site palette, typography and borders.
 
+## RSS subscriptions
+
+Every normal build also generates RSS 2.0 files at `/feeds/all.xml`,
+`/feeds/countries/<COUNTRY>/all.xml`, `/feeds/sources/<SOURCE>.xml` and
+`/feeds/countries/<COUNTRY>/sources/<SOURCE>.xml`. Country is the publisher's
+ISO country code, matching the Publisher country filter; it is separate from
+opportunity destinations and applicant eligibility. `unknown` includes records
+without a publisher country. Known combinations with no matches have valid empty
+feeds. Arbitrary nonexistent file paths receive the existing static 404 page.
+
+The main opportunity listing, publisher-country listings and individual source
+listings expose a small RSS link near their filters. Country/source selections
+update that link. Other active filters hide the link with an explanation, so a
+subscription never silently promises search, category or eligibility filtering.
+
+Feeds include the same classified opportunity records as discovery, including
+expired records retained by the index. Each item has its stable canonical
+opportunity URL as GUID, publisher attribution, publisher-country category and a
+short plain-text summary. A supplied publication/update timestamp becomes
+`pubDate`; a date-only value keeps its calendar date in `dc:date` without
+inventing a time or timezone. Invalid calendar dates and timestamps without an
+explicit timezone are skipped, falling back to a valid publication date when
+available. Ordering and emitted dates use the same accepted value.
+Missing dates stay absent rather than being
+replaced by a collection or build time. Items with unknown dates have stable ID order after dated items.
+Rebuilding replaces the files rather than appending duplicates, and the existing
+data-sync/build automation refreshes them without a backend. Feed files are
+served directly and work on static Pages hosting.
+
 ## Crawler transparency
 
 The build generates `/bot/` in the shared page shell, includes it in the page
