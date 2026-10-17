@@ -1,3 +1,6 @@
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
+
+/feeds/*
+  Content-Type: application/rss+xml; charset=utf-8
