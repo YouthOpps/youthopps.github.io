@@ -64,8 +64,13 @@ if (/^G-[A-Z0-9]+$/.test(analyticsId || '')) {
     window.dataLayer = window.dataLayer || [];
     window.gtag = function () { window.dataLayer.push(arguments); };
     window.gtag('js', new Date());
-    // Search strings and fragments never enter the configured page URL.
-    window.gtag('config', analyticsId, {page_location: window.location.origin + window.location.pathname});
+    // Strip queries and fragments from both URLs before sending a page view.
+    let referrer = '';
+    if (document.referrer) {
+      const url = new URL(document.referrer);
+      referrer = url.origin + url.pathname;
+    }
+    window.gtag('config', analyticsId, {page_location: window.location.origin + window.location.pathname, page_referrer: referrer});
     const context = catalogContext(window.location.pathname);
     if (context) track('catalog_view', context);
     const script = document.createElement('script');
