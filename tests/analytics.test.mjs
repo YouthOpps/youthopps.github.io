@@ -8,7 +8,7 @@ const countryIds = ['us','at','be','bg','hr','cy','cz','dk','ee','fi','fr','de',
 function session({choice='allow', route='/opportunities/', base='', id='G-MGW77TH5Z3'}={}) {
  const listeners = {}; const panelListeners = {}; const inserted = [];
  const panel = {setAttribute(){},querySelector(){return {prepend(){}}},addEventListener(name,handler){panelListeners[name]=handler},remove(){}};
- const context = {URL,window:{location:new URL('https://youthopps.org'+base+route+'?q=private-search#private-fragment')},localStorage:{getItem(){return choice},setItem(){}},document:{currentScript:{dataset:{id,base,siteName:'YouthOpp',categories:categoryIds.join(' '),countries:countryIds.join(' ')}},createElement(kind){return kind==='div'?panel:{}},createTextNode(value){return value},addEventListener(name,handler){listeners[name]=handler},head:{append(value){inserted.push(value)}},body:{append(){}}}};
+ const context = {URL,window:{location:new URL('https://youthopps.org'+base+route+'?q=private-search#private-fragment')},localStorage:{getItem(){return choice},setItem(){}},document:{referrer:'https://youthopps.org/search/?q=private-query#private',currentScript:{dataset:{id,base,siteName:'YouthOpp',categories:categoryIds.join(' '),countries:countryIds.join(' ')}},createElement(kind){return kind==='div'?panel:{}},createTextNode(value){return value},addEventListener(name,handler){listeners[name]=handler},head:{append(value){inserted.push(value)}},body:{append(){}}}};
  vm.runInNewContext(code,context);
  const events=()=>JSON.parse(JSON.stringify((context.window.dataLayer||[]).map(args=>Array.from(args)).filter(args=>args[0]==='event')));
  const click=href=>listeners.click?.({target:{closest(){return {href}}}});
@@ -26,7 +26,7 @@ test('consent discards previous interactions and prevents scripts/events while d
 test('country filter is validated and page configuration excludes free text',()=>{
  const s=session({route:'/opportunities/training/de/page/2/'});s.filter('FR');assert.deepEqual(s.events().at(-1),['event','country_filter',{category:'training',country:'fr',page_number:2}]);
  const count=s.events().length;s.filter('private-email@example.com');s.click('https://external.example/countries/de/');s.click('https://youthopps.org/opportunities/private-search/');s.click('https://youthopps.org/opportunities/training/de/page/2/#main');assert.equal(s.events().length,count);
- const config=Array.from(s.context.window.dataLayer[1]);assert.equal(config[2].page_location,'https://youthopps.org/opportunities/training/de/page/2/');assert.ok(!JSON.stringify(s.events()).includes('private'));
+ const config=Array.from(s.context.window.dataLayer[1]);assert.equal(config[2].page_location,'https://youthopps.org/opportunities/training/de/page/2/');assert.equal(config[2].page_referrer,'https://youthopps.org/search/');assert.ok(!JSON.stringify(s.events()).includes('private'));
 });
 test('event routing supports deliberate local subpaths and ignores invalid identifiers',()=>{
  const s=session({base:'/project',route:'/opportunities/jobs/us/page/3/'});assert.deepEqual(s.events()[0][2],{category:'jobs',country:'us',page_number:3});s.click('https://youthopps.org/countries/us/');assert.equal(s.events().length,1);

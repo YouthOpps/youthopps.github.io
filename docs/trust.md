@@ -16,7 +16,7 @@ The project is individually run and is not a registered nonprofit organization.
 
 Core browsing needs no account and collects no application details. Search runs in your browser using static indexes; query/filter state appears in the page URL. Applications happen on external sites under their own policies. Hosting providers process requests under their own terms.
 
-Optional analytics is currently disabled. Before enabling it, maintainers must verify that automatic history, site-search and form measurement cannot transmit typed queries. If configured, Google tracking loads only after consent. The browser stores that choice under `youthopp-analytics`; clearing site storage resets it. Do not put personal information in searches or public issues.
+If you select Allow analytics, the site loads Google Analytics to measure page views and catalog navigation. Page and referrer URLs exclude search parameters and fragments. Maintain the web stream with automatic history, site-search and form measurement disabled to keep typed queries private. The browser stores that choice under `youthopp-analytics`; clearing site storage resets it. Do not put personal information in searches or public issues.
 
 ## Rights and design
 
