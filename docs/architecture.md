@@ -103,3 +103,22 @@ The selected data-source revision must contain `datas/`. The local migrated data
 ## Text languages
 
 Opportunity titles and listing links retain the source record’s `language`. An optional `summary_language` language tag controls the detail description independently, so an English factual summary can accompany an original Croatian title. Older records fall back to `language`, then `und`; intentionally localized summaries retain their declared language. Present summary tags must be nonempty language tags such as `en`, `bg` or `en-GB`.
+
+### Previewing a LinkedIn index update
+
+The read-only preview consumes a deployed global search collection, a cumulative baseline
+of previously indexed source/record pairs, and a JSON object mapping source IDs to their
+public names. The first run uses an explicit seed and produces no announcement.
+
+```sh
+node scripts/linkedin-preview.mjs collection.json --seed source-names.json > initial.json
+jq '.baseline' initial.json > baseline.json
+node scripts/linkedin-preview.mjs collection.json baseline.json source-names.json en
+```
+
+Use `tr` for Turkish. The output contains a proposed cumulative baseline. A preview
+neither saves a publication cursor nor sends a message. Production delivery still
+requires verified deployment identity, serialized daily execution, a durable checkpoint,
+ambiguous-post reconciliation and an authorized LinkedIn destination. Only a confirmed
+successful publication may consume the proposed changes. Keep the seed from the first
+verified deployment to avoid reannouncing previously indexed records.
